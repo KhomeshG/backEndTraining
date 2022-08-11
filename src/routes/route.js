@@ -51,10 +51,10 @@ router.post("/test-post-2", function(req, res) {
 })
 
 router.post("/test-post-3", function(req, res) {
-    // let id = req.body.user
-    // let pwd= req.body.password
+    let id = req.body.user
+    let pwd= req.body.password
 
-    // console.log( id , pwd)
+    console.log( id , pwd)
 
     console.log( req.body )
 
@@ -69,5 +69,64 @@ router.post("/test-post-4", function(req, res) {
     arr.push(ele)
     res.send(  { msg: arr , status: true }  )
 })
+//
+
+
+//Assignment 10Aug2022--------------->
+//----------------------------------------------
+let players=[{"name":"manish",
+            "dob":"1/1/1995",
+            "gender":"male",
+        "city":"jalandhar",
+        "sports":["swwimming"]},
+        {"name":"gopal",
+        "dob":"1/09/1995",
+        "gender":"male",
+    "city":"delhi",
+    "sports":["soccer"]},
+    {"name":"lokesh",
+    "dob":"1/1/1990",
+    "gender":"male",
+"city":"mumbai",
+"sports":["soccerr"]}]
+//Creating one flag globaly
+let nameIsExist=false
+
+router.post('/players', function (req, res) {
+    let queryParams = req.body 
+    //players data store inside of this variable which comming from body input
+    
+    for (i = 0; i < players.length; i++){
+        if (players[i].name === queryParams.name) {
+            //Accesing array of objects Dot method
+            nameIsExist=true 
+            break
+        }  
+    }
+    if (nameIsExist) {
+        //true
+        res.send("Name is Exist")
+    }
+    else {
+        //false
+        players.push(queryParams)
+        res.send(players)
+        //res.send() function does not allow numeric numbers or undefine
+    }
+    //to see application is working fine or not 
+    console.log("----------------new Output--------------------")
+    console.log(players)
+
+    
+
+})
+//------------------end----------------------------------
+
+
+// let arr = [25, 45, 54, 67, 20183, 32]
+// router.post('/filter', function (req, res) {
+//     let input1 = req.query
+    
+// })
 
 module.exports = router;
