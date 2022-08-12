@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const express = require('express');
 const router = express.Router();
 
@@ -91,7 +92,9 @@ let players=[{"name":"manish",
 "sports":["soccerr"]}]
 //Creating one flag globaly
 let nameIsExist=false
+//API For Adding Players Data
 
+//------
 router.post('/players', function (req, res) {
     let queryParams = req.body 
     //players data store inside of this variable which comming from body input
@@ -122,11 +125,40 @@ router.post('/players', function (req, res) {
 })
 //------------------end----------------------------------
 
+//-----ApI for booking Slot for a Player
+//=================================================
+router.post('/players/:playerName', function (req, res) {
+    //in Above plyerName and bookingID is Path parems
+    let pathParames = req.params.playerName
+    //this will give me undefine bcz It is in Objesct format I Need to Convert this in Json formate 
+    let Jconvert = JSON.stringify(pathParames)
+    //req.params.playerName data is store inside of pathParames
+    for (i = 0; i < players.length; i++){
+        if (Jconvert.name===players.name) {
+            
+        }
+        
+    }
+    //checking name is exist or not in our Array using Higher Order Function 
+    console.log(nameCheck)
+})
+
+
+
+
+
+
+
+
 
 // let arr = [25, 45, 54, 67, 20183, 32]
 // router.post('/filter', function (req, res) {
 //     let input1 = req.query
     
 // })
+
+//Post Api Asssignment 12AUG
+
+
 
 module.exports = router;
