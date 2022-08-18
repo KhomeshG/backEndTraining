@@ -5,6 +5,12 @@ const UserController = require("../controllers/userController");
 const BookController = require("../controllers/bookController");
 //importing newBookSchema Modul
 const newBookController = require("../controllers/newBookController");
+//importing nBookSchema Module
+const nBookSchema = require("../models/nBookSchema");
+//importing authorScchema Module
+const authorModule = require("../models/authorsSchemaModel");
+//importing Controller
+const authorBookController = require("../controllers/authorBookController");
 
 router.get("/test-me", function (req, res) {
   res.send("My first ever api!");
@@ -35,10 +41,10 @@ router.post("/getBooksInYear", newBookController.getBooksInYear);
 
 //getParticularBooks:- (this is a good one, make sincere effort to solve this) take any input and use it as a condition to fetch books that satisfy that condition
 
-router.post("getParticularBooks", async function (req, res) {
-  // let bodyData = req.body;
+router.get("getParticularBooks", async function (req, res) {
+  let bodyData = req.body;
   // getting userInput throught bodys
-  let bookData = await newBookSchema.find(req.body);
+  let bookData = await newBookSchema.find(bodyData);
   res.send({ msg: bookData });
 });
 
@@ -60,4 +66,28 @@ router.get("getXINRBooks", async function (req, res) {
 
 //getRandomBooks - returns books that are available in stock or have more than 500 pages
 router.get("/getRandomBooks", newBookController.getRandomBooks);
+
+//Assignment 17
+//Date 17
+// Books and author Schema
+
+//1. Write down the schemas for book and authors
+//--------------------------------------------------------------
+router.post("/creatNewBook", authorBookController.createNewBook);
+
+router.post("/authorCreate", authorBookController.authorCreate);
+
+//List out the books written by "Chetan Bhagat"
+
+router.get("/listByAuthorName", authorBookController.listOfBooks);
+
+//find the author of “Two states” and update the book price to 100;  Send back the author_name and updated price in response
+router.get("/findUpdate", authorBookController.findAndUpdate);
+
+//Find the books which costs between 50-100(50,100 inclusive) and respond back with the author names of respective books.
+router.get(
+  "/findBookswithAuthNames",
+  authorBookController.findBookswithAuthNames
+);
+
 module.exports = router;
