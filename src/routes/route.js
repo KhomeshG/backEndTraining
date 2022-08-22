@@ -53,41 +53,23 @@ router.get(
 // a) Add a new boolean attribute in the book schema called isHardCover with a default false value.
 // For the books published by 'Penguin' and 'HarperCollins', update this key to true.
 
-router.get("/books", async function (req, res) {
-  // let bookPutBody = req.body;
-  let booksUpdate = await nayiBookSchema
-    .find()
-    .populate("publisher")
-    .select({ publisher: 1, _id: 0 })
-    .updateMany();
-
-  A = booksUpdate.filter((x) =>
-    x.publisher.name == "Penguin"
-      ? (x.isHardCover = true)
-      : (x.isHardCover = false)
-  );
-
-  res.send({ data: A });
-});
-
-router.put("/b1", async function (req, res) {
-  let put1 = req.body;
-  let books = await newPublisherSchema
-
-    .find({
-      name: { $in: [put1.name, put1.name2] },
-    })
-    .select({ _id: 1 });
-  let b4U = books.map((x) => x._id);
-  console.log(b4U);
-  let pId = await nayiBookSchema.updateMany(
-    { publisher: { $in: [b4U] } },
-    { $set: { isHardCover: put1.isHardCover } },
-    { upsert: true },
-    { new: true }
-  );
-  //in publisher and geeting 2publisher Ids
-  res.send({ data: pId });
-});
+router.put("/books", nayiBookController.books);
 
 module.exports = router;
+
+// router.put("/books", async function (req, res) {
+//   // let bookPutBody = req.body;
+//   let booksUpdate = await nayiBookSchema
+//     .find()
+//     .populate("publisher")
+//     .select({ publisher: 1, _id: 0 })
+//     .updateMany();
+
+//   A = booksUpdate.filter((x) =>
+//     x.publisher.name == "Penguin"
+//       ? (x.isHardCover = true)
+//       : (x.isHardCover = false)
+//   );
+
+//   res.send({ data: A });
+// });

@@ -7,7 +7,6 @@ const nayiBookSchema = new mongoose.Schema(
     name: String,
     author: {
       type: String,
-      default: false,
       type: ObjectId,
       ref: "NewAuthor",
     },
