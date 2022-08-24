@@ -35,6 +35,30 @@ const getRandomBooks = async function (req, res) {
   res.send({ msg: randomBooks });
 };
 
+//
+exports.getParticularBooks = async function (req, res) {
+  let bodyData = req.body;
+  console.log(bodyData);
+  // getting userInput throught bodys
+  let bookData = await newBookModel.find(bodyData);
+  res.send({ msg: bookData });
+};
+
+exports.getXINRBooks = async function (req, res) {
+  // let fetchByBookPrice = await newBookSchema.find({
+  //   "prices.indian": { $in: ["100INR","200INR", "300INR"] },
+  // });
+  let fetchByBookPrice = await newBookModel.find({
+    $or: [
+      { "prices.indian": "100INR" },
+      { "prices.indian": "200INR" },
+      { "prices.indian": "500INR" },
+    ],
+  });
+
+  res.send({ msg: fetchByBookPrice });
+};
+
 //exporting Functions
 
 module.exports.creatBook = creatBook;

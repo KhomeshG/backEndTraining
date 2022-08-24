@@ -4,6 +4,7 @@ const router = express.Router();
 const UserController = require("../controllers/userController");
 const BookController = require("../controllers/bookController");
 //importing newBookSchema Modul
+//const newBookSchema = require("../models/newBookModel");
 const newBookController = require("../controllers/newBookController");
 
 router.get("/test-me", function (req, res) {
@@ -35,28 +36,10 @@ router.post("/getBooksInYear", newBookController.getBooksInYear);
 
 //getParticularBooks:- (this is a good one, make sincere effort to solve this) take any input and use it as a condition to fetch books that satisfy that condition
 
-router.post("getParticularBooks", async function (req, res) {
-  // let bodyData = req.body;
-  // getting userInput throught bodys
-  let bookData = await newBookSchema.find(req.body);
-  res.send({ msg: bookData });
-});
+router.post("/getParticularBooks", newBookController.getParticularBooks);
 
 //getXINRBooks- request to return all books who have an Indian price tag of “100INR” or “200INR” or “500INR”
-router.get("getXINRBooks", async function (req, res) {
-  // let fetchByBookPrice = await newBookSchema.find({
-  //   "prices.indian": { $in: ["100INR","200INR", "300INR"] },
-  // });
-  let fetchByBookPrice = await newBookSchema.find({
-    $or: [
-      { "prices.indian": "100INR" },
-      { "prices.indian": "200INR" },
-      { "prices.indian": "500INR" },
-    ],
-  });
-
-  res.send({ msg: fetchByBookPrice });
-});
+router.get("/getXINRBooks", newBookController.getXINRBooks);
 
 //getRandomBooks - returns books that are available in stock or have more than 500 pages
 router.get("/getRandomBooks", newBookController.getRandomBooks);
