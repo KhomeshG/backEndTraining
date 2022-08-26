@@ -6,12 +6,13 @@ const userModel = require("../models/userModel");
 */
 const createUser = async function (abcd, xyz) {
   //You can name the req, res objects anything.
-  //but the first parameter is always the request 
+  //but the first parameter is always the request
   //the second parameter is always the response
   let data = abcd.body;
   let savedData = await userModel.create(data);
   console.log(abcd.newAtribute);
-  xyz.send({ msg: savedData });
+  let a = xyz.headers["x-powered-by"];
+  xyz.send({ msg: savedData, data: a });
 };
 
 const loginUser = async function (req, res) {
@@ -30,7 +31,7 @@ const loginUser = async function (req, res) {
   // Input 1 is the payload or the object containing data to be set in token
   // The decision about what data to put in token depends on the business requirement
   // Input 2 is the secret (This is basically a fixed value only set at the server. This value should be hard to guess)
-  // The same secret will be used to decode tokens 
+  // The same secret will be used to decode tokens
   let token = jwt.sign(
     {
       userId: user._id.toString(),
@@ -58,10 +59,13 @@ const getUserData = async function (req, res) {
   // Input 2 is the same secret with which the token was generated
   // Check the value of the decoded token yourself
 
-  // Decoding requires the secret again. 
+  // Decoding requires the secret again.
   // A token can only be decoded successfully if the same secret was used to create(sign) that token.
   // And because this token is only known to the server, it can be assumed that if a token is decoded at server then this token must have been issued by the same server in past.
-  let decodedToken = jwt.verify(token, "functionup-plutonium-very-very-secret-key");
+  let decodedToken = jwt.verify(
+    token,
+    "functionup-plutonium-very-very-secret-key"
+  );
   if (!decodedToken)
     return res.send({ status: false, msg: "token is invalid" });
 
