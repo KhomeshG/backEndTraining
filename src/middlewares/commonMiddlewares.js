@@ -22,11 +22,11 @@ const mid4 = function (req, res, next) {
 //Aug25 Assignment
 //middleware part2
 const freeUserChecker = function (req, res, next) {
-  let reqHeader = Boolean(req.headers["isfreeappuser"]);
+  let reqHeader = req.headers["isfreeappuser"];
   if (reqHeader == undefined) {
-    res.send(" request is missing a mandatory header");
+    return res.send(" request is missing a mandatory header");
   } else {
-    // reqHeader = Boolean(reqHeader);
+    reqHeader = Boolean(reqHeader);
     next();
   }
 };
@@ -36,3 +36,4 @@ module.exports.mid2 = mid2;
 module.exports.mid3 = mid3;
 module.exports.mid4 = mid4;
 module.exports.freeUserChecker = freeUserChecker;
+module.exports.reqHeader = this.reqHeader;

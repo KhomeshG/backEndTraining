@@ -11,6 +11,11 @@ const newProductModel = require("../models/newProductModel");
 const newUserSchema = require("../models/newUserModel");
 const newOrderModel = require("../models/newOrderModel");
 
+//Controllers import
+const productController = require("../controllers/productController");
+const newUserController = require("../controllers/newUserController");
+const orderController = require("../controllers/orderController");
+
 router.get("/test-me", function (req, res) {
   res.send("My first ever api!");
 });
@@ -60,44 +65,13 @@ router.get(
 //Middleware part 2
 
 //Write a POST api to create a product from the product details in request body.
-router.post("/products", async function (req, res) {
-  let productBody = req.body;
-  let productData = await newProductModel.create(productBody);
-
-  res.send({ data: productData });
-});
+router.post("/products", productController.product);
 
 //Write a POST api to create a user that takes user details from the request body with isFreeAppUser validation
-router.post("/user", commonMW.freeUserChecker, async function (req, res) {
-  let userBody = req.body;
-  let userInput = commonMW.reqHeader;
-  let userData = await (
-    await newUserSchema.create(userBody)
-  ).updateOne({ isFreeAppUser: userInput });
-  res.send({ data: userData });
-});
+router.post("/user", commonMW.freeUserChecker, newUserController.user);
 
 //Write post Api for create Order
 
-router.post("/order", commonMW.freeUserChecker, async function (req, res) {
-  let orderBody = req.body;
-  let userValidate = await newUserSchema.findById(orderBody.userId);
-  let productValidate = await newProductModel.findById(orderBody.productId);
-  if (!userValidate) {
-    res.send("UserId is Not-Found/or/ userId is Invalid");
-  }
-  if (!productValidate) {
-    res.send("productId is Not-Found/or/ productId is Invalid");
-  }
-  if (commonMW.reqHeader == true) {
-    let orderData = await newOrderModel.create(orderBody, {
-      amount: 0,
-      isFreeAppUser: true,
-    });
-    res.send({ data: orderData });
-  } else {
-    res.send("Not Working");
-  }
-});
+router.post("/order", commonMW.freeUserChecker, orderController.order);
 
 module.exports = router;
