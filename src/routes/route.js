@@ -34,6 +34,7 @@ router.post("/newLogin", loginController.newLogin);
 router.get(
   "/newUsers/:userId",
   commanMiddleware.headerChecker,
+  commanMiddleware.authentication,
   newuserController.getuser
   //:userId is path param here
 );
@@ -44,6 +45,7 @@ router.get(
 router.put(
   "/newUsers/:userId",
   commanMiddleware.headerChecker,
+  commanMiddleware.authentication,
   newuserController.updateUser
 );
 
@@ -52,6 +54,7 @@ router.put(
 router.delete(
   "/newUsers/:userId",
   commanMiddleware.headerChecker,
+  commanMiddleware.authentication,
   newuserController.isdeleteUser
 );
 module.exports = router;

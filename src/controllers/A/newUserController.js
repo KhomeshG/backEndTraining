@@ -12,16 +12,21 @@ exports.user = async function (req, res) {
 // If absent, return a suitable error.6
 
 exports.getuser = async function (req, res) {
+  let token = req.headers["x-auth-token"];
+  let decodedToken = jwt.verify(
+    token,
+    "functionup-plutonium-trust-build-secret-key"
+  );
+  if (!decodedToken) {
+    res.send("Token is invalid");
+  }
   //Pass the userId as path param in the url
 
   let userId = req.params.userId;
   let userIdValidate = await newUserSchena.findById(userId);
   console.log(userIdValidate);
-
-  //writing the logic for authorisation now so that a logged in user can modify or fetch ONLY their own data.
-
   if (!userIdValidate) {
-    return res.send("UserId is invalid");
+    res.send("UserId is invalid");
   } else {
     res.send({ data: userIdValidate });
   }
@@ -31,22 +36,15 @@ exports.getuser = async function (req, res) {
 
 exports.updateUser = async function (req, res) {
   //Pass the userId as path param
-
-  //Pass the userId as path param in the url
-  let userId = req.params.userId;
-  //finding userId in collection
-  let userIdValidator = await newUserSchena.findById(userId);
+  let userIdPath = req.params.userId;
+  let userIdValidator = await newUserSchena.findById(userIdPath);
   console.log(userIdValidator);
-  //Validating UserID
   if (!userIdValidator) {
     res.send("UserID is Invalid");
   }
-  //writing the logic for authorisation now so that a logged in user can modify or fetch ONLY their own data.
-
-  //Taking Changes From user
   let userBody = req.body;
   let userDataUpdate = await newUserSchena.findByIdAndUpdate(
-    { _id: userId },
+    { _id: userIdPath },
     userBody,
     { new: true }
   );
@@ -55,17 +53,14 @@ exports.updateUser = async function (req, res) {
 
 //
 exports.isdeleteUser = async function (req, res) {
-  let userId = req.params.userId;
-  //finding userId in collection
-  let userIdValidator = await newUserSchena.findById(userId);
+  let userIdPath = req.params.userId;
+  let userIdValidator = await newUserSchena.findById(userIdPath);
   console.log(userIdValidator);
-  //Validating UserID
   if (!userIdValidator) {
     res.send("UserID is Invalid");
   }
-  //Doing Changes as per questions/Requiremnet
   let userDatacheck = await newUserSchena.findByIdAndUpdate(
-    { _id: userId },
+    { _id: userIdPath },
     { isDeleted: true },
     { new: true }
   );
