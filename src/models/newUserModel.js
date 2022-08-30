@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 const newUserSchena = mongoose.Schema(
   {
-    firstName: String,
+    firstName: { type: String, required: true },
     lastName: String,
     mobile: Number,
     emailId: String,
