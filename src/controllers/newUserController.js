@@ -35,6 +35,14 @@ exports.getuser = async function (req, res) {
 //// Pass the userId as path param in the url and update the attributes received in the request body.
 
 exports.updateUser = async function (req, res) {
+  let token = req.headers["x-auth-token"];
+  let decodedToken = jwt.verify(
+    token,
+    "functionup-plutonium-trust-build-secret-key"
+  );
+  if (!decodedToken) {
+    res.send("Token is invalid");
+  }
   //Pass the userId as path param
   let userIdPath = req.params.userId;
   let userIdValidator = await newUserSchena.findById(userIdPath);
@@ -53,6 +61,17 @@ exports.updateUser = async function (req, res) {
 
 //
 exports.isdeleteUser = async function (req, res) {
+  let token = req.headers["x-auth-token"];
+  let decodedToken = jwt.verify(
+    token,
+    "functionup-plutonium-trust-build-secret-key"
+  );
+  if (!decodedToken) {
+    res.send("Token is invalid");
+  }
+
+  //Pass the userId as path param
+
   let userIdPath = req.params.userId;
   let userIdValidator = await newUserSchena.findById(userIdPath);
   console.log(userIdValidator);
