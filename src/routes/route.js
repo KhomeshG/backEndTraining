@@ -19,6 +19,12 @@ router.post("/cowin/getOtp", CowinController.getOtp);
 router.get("/cowin/findByDistrictId", CowinController.findByDistrictId);
 
 //Q2
-router.get("/cowin/findWheatherByCityName", CowinController.findByDistrictId);
+router.get(
+  "/wheather/findWheatherByCityName",
+  CowinController.findWheatherByCityName
+);
+
+//Q3
+router.post("/memes", CowinController.memes);
 
 module.exports = router;

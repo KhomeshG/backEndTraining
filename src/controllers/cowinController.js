@@ -95,11 +95,49 @@ exports.findByDistrictId = async function (req, res) {
 //Q2
 exports.findWheatherByCityName = async function (req, res) {
   try {
-    let cityName = req.query.q;
-    let apiKey = req.query.appid;
+    let city = [
+      "Bengaluru",
+      "Mumbai",
+      "Delhi",
+      "Kolkata",
+      "Chennai",
+      "London",
+      "Moscow",
+    ];
+    let store = [];
+    for (let i = 0; i < city.length; i++) {
+      cityName = city[i];
+      let apiKey = req.query.appid;
+      let options = {
+        method: "get",
+        url: `http://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`,
+      };
+      let result = await axios(options);
+      store.push({ City: city[i], temp: result.data.main.temp });
+    }
+    console.log(store.sort((a, b) => a.temp - b.temp));
+
+    const sortByCities = store.sort((a, b) => a.temp - b.temp);
+
+    res.status(200).send({ data: sortByCities });
+    // let cityName = req.query.q;
+  } catch (err) {
+    res.status(500).send({ msg: err.message });
+  }
+};
+
+//Q3
+exports.memes = async function (req, res) {
+  try {
+    let template_id = req.query.template_id;
+    let text0 = req.query.text0;
+    let text1 = req.query.text1;
+    let username = req.query.username;
+    let password = req.query.password;
+    //
     let options = {
-      method: "get",
-      url: `http://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`,
+      method: "post",
+      url: `https://api.imgflip.com/caption_image?template_id=${template_id}&text0=${text0}&text1=${text1}&username=${username}&password=${password}`,
     };
     let result = await axios(options);
     res.status(200).send({ data: result.data });
