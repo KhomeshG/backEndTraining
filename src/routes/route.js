@@ -7,9 +7,12 @@ router.get("/test-me", function (req, res) {
   res.send("My first ever api!");
 });
 
+//Create a author document from request body. Endpoint: BASE_URL/authors
+
 router.post("/authors", authorController.authors);
 
-//blogs
+//Create a Blogs document from request body. Endpoint: BASE_URL/blogs
+
 router.post("/blogs", blogController.blogs);
 
 module.exports = router;
