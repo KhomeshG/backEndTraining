@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const blogModel = require("../models/blogModel");
 const authorModel = require("../models/authorModel");
+const moment = require("moment");
+
+//Globals
+
+let dateToday = moment();
 
 const isValid = function (value) {
   if (typeof value === "undefined" || value === Number || value === null)
@@ -75,6 +80,7 @@ const getblogs = async function (req, res) {
     let subcategory = req.query.subcategory;
 
     // applying filters
+    //Returns all blogs in the collection that aren't deleted and are published
     if (authorId) {
       obj.authorId = authorId;
     }
@@ -107,6 +113,11 @@ exports.blogsUpdate = async function (req, res) {
       return res.status(400).send({ msg: "ID is madatory" });
     }
 
+    //Validating Empty Document(Doc Present/Not)
+    if (Object.keys(blogBody) == 0) {
+      return res.status(400).send({ msg: "Cant Update Empty document" });
+    }
+
     //Validating BlogId(Present/Not)
 
     let checkBlogId = await blogModel.findById(req.params.blogId);
@@ -115,19 +126,33 @@ exports.blogsUpdate = async function (req, res) {
     }
 
     //Allowing Only Whose Document Is Not Delected
+
     if (checkBlogId.isDeleted == true) {
-      return res
-        .status(400)
-        .send({ msg: "if deleted is true deletedAt will have a date" });
+      return res.status(400).send({ msg: "This Document is Already Deleted" });
     }
+
     //All Validation Working
+
     //Upadting user Changes
     else {
       let blogUpdateData = await blogModel.findByIdAndUpdate(
         {
           _id: checkBlogId._id,
         },
-        blogBody,
+
+        {
+          $addToSet: { tags: blogBody.tags, subcategory: blogBody.subcategory },
+          $set: {
+            title: blogBody.title,
+            body: blogBody.body,
+            authorId: blogBody.authorId,
+            category: blogBody.category,
+            isPublished: true,
+            isDeleted: blogBody.isDeleted,
+          },
+          $currentDate: { publishedAt: dateToday.format("YYYY-MM-DD") },
+        },
+
         { new: true }
       );
       return res.status(201).send({ data: blogUpdateData });
