@@ -78,7 +78,7 @@ const getblogs = async function (req, res) {
     let category = req.query.category;
     let tags = req.query.tags;
     let subcategory = req.query.subcategory;
-
+    console.log(authorId);
     // applying filters
     //Returns all blogs in the collection that aren't deleted and are published
     if (authorId) {
