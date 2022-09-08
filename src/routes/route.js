@@ -29,7 +29,7 @@ router.get(
 router.put(
   "/blogs/:blogId",
   middleware.headerCheck,
-  middleware.authentication,
+  middleware.blogIdPlusAuthorIdCheck,
   blogController.blogsUpdate
 );
 
@@ -37,7 +37,7 @@ router.put(
 router.delete(
   "/blogsby/:blogId",
   middleware.headerCheck,
-  middleware.authentication,
+  middleware.blogIdPlusAuthorIdCheck,
   blogController.deleteBlogById
 );
 

@@ -82,7 +82,7 @@ const getblogs = async function (req, res) {
     // applying filters
     //Returns all blogs in the collection that aren't deleted and are published
     if (authorId) {
-      obj.authorId = authorId;
+      obj.authorId = authorId; //if authorID (present) then  creating object(key ,value pair) inside obj
     }
     if (category) {
       obj.category = category;
@@ -109,9 +109,9 @@ exports.blogsUpdate = async function (req, res) {
   try {
     //If param value is undefined
     let blogBody = req.body;
-    if (req.params.blogId == ":blogId") {
-      return res.status(400).send({ msg: "ID is madatory" });
-    }
+    // if (req.params.blogId == ":blogId") {
+    //   return res.status(400).send({ msg: "ID is madatory" });
+    // }
 
     //Validating Empty Document(Doc Present/Not)
     if (Object.keys(blogBody) == 0) {
@@ -172,7 +172,7 @@ const deleteBlogById = async function (req, res) {
     let blogId = req.params.blogId;
     let blog = await blogModel.findById(blogId);
     let data = blog.isDeleted;
-    console.log(data);
+    //console.log(data);
     if (!blog) {
       return res.status(404).send(" This is not  a valid blogId");
     }
@@ -199,7 +199,7 @@ const deleteblog = async function (req, res) {
     let Blog = await blogModel.findById(authorId);
 
     if (authorId) {
-      let deleteblog = await blogModel.findOneAndUpdate(
+      let deleteblog = await blogModel.updateMany(
         { authorId: authorId },
         { isDeleted: true },
         { new: true }
@@ -209,7 +209,7 @@ const deleteblog = async function (req, res) {
     }
 
     if (categoryname) {
-      let deleteblog = await blogModel.findOneAndUpdate(
+      let deleteblog = await blogModel.updateMany(
         { category: categoryname },
         { isDeleted: true },
         { new: true }
@@ -219,7 +219,7 @@ const deleteblog = async function (req, res) {
     }
 
     if (tagname) {
-      let deleteblog = await blogModel.findOneAndUpdate(
+      let deleteblog = await blogModel.updateMany(
         { tags: tagname },
         { isDeleted: true },
         { new: true }
@@ -229,7 +229,7 @@ const deleteblog = async function (req, res) {
     }
 
     if (subcategoryname) {
-      let deleteblog = await blogModel.findOneAndUpdate(
+      let deleteblog = await blogModel.updateMany(
         { subcategory: categoryname },
         { isDeleted: true },
         { new: true }
@@ -239,7 +239,7 @@ const deleteblog = async function (req, res) {
     }
 
     if (unpublished) {
-      let deleteblog = await blogModel.findOneAndUpdate(
+      let deleteblog = await blogModel.updateMany(
         { isPublished: unpublished },
         { isDeleted: true },
         { new: true }
