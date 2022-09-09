@@ -56,16 +56,20 @@ exports.blogs = async function (req, res) {
     //Checking authorId(present/Not)
     let checkAuthorId = await authorModel.findById(req.body.authorId);
     if (!checkAuthorId) {
-      return res.status(400).send({ msg: "Please Enter Valid AuthorId" });
+      return res
+        .status(400)
+        .send({ status: false, msg: "Please Enter Valid AuthorId" });
     }
 
     //all Working Fine (then else)
     else {
       let blogData = await blogModel.create(blogBody);
-      res.status(201).send({ data: blogData });
+      res.status(201).send({ status: true, data: blogData });
     }
   } catch (err) {
-    res.status(500).send({ ErrorName: err.name, ErrorMsg: err.message });
+    res
+      .status(500)
+      .send({ status: false, ErrorName: err.name, ErrorMsg: err.message });
   }
 };
 // ------------get blogs---------------
@@ -96,11 +100,16 @@ const getblogs = async function (req, res) {
 
     let savedData = await blogModel.find(obj);
     if (savedData.length == 0) {
-      return res.status(404).send({ status: false, msg: "blogs not found" });
+      return res.status(404).send({
+        status: false,
+        msg: "blog not found / Maybe Bcz (its deleted or Not Published)",
+      });
     }
-    return res.status(200).send({ data: savedData });
+    return res.status(200).send({ Status: true, data: savedData });
   } catch (err) {
-    return res.status(500).send({ msg: "Error", error: err.message });
+    return res
+      .status(500)
+      .send({ msg: "Server Error 500", error: err.message });
   }
 };
 
@@ -115,20 +124,24 @@ exports.blogsUpdate = async function (req, res) {
 
     //Validating Empty Document(Doc Present/Not)
     if (Object.keys(blogBody) == 0) {
-      return res.status(400).send({ msg: "Cant Update Empty document" });
+      return res
+        .status(400)
+        .send({ status: false, msg: "Cant Update Empty document" });
     }
 
     //Validating BlogId(Present/Not)
 
     let checkBlogId = await blogModel.findById(req.params.blogId);
     if (!checkBlogId) {
-      return res.status(400).send({ msg: "Blog Id is Invalid" });
+      return res.status(400).send({ status: false, msg: "Blog Id is Invalid" });
     }
 
     //Allowing Only Whose Document Is Not Delected
 
     if (checkBlogId.isDeleted == true) {
-      return res.status(400).send({ msg: "This Document is Already Deleted" });
+      return res
+        .status(400)
+        .send({ status: false, msg: "This Document is Already Deleted" });
     }
 
     //All Validation Working
@@ -155,7 +168,7 @@ exports.blogsUpdate = async function (req, res) {
 
         { new: true }
       );
-      return res.status(201).send({ data: blogUpdateData });
+      return res.status(201).send({ status: true, data: blogUpdateData });
     }
   } catch (err) {
     res.status(500).send({
@@ -173,17 +186,23 @@ const deleteBlogById = async function (req, res) {
     let blog = await blogModel.findById(blogId);
     let data = blog.isDeleted;
     //console.log(data);
-    if (!blog) {
-      return res.status(404).send(" This is not  a valid blogId");
-    }
 
     if (data == true) {
       return res.status(404).send("blog document doesn't exist");
     } else {
-      res.status(200).send({ status: 200 });
+      //New Changes (Remove this Comment After Doing Changes )
+      let markDelete = await blogModel.updateOne(
+        { _id: blog._id },
+        { isDeleted: true },
+        { new: true }
+        //
+      );
+      res.status(200).send({ status: true, status: 200 });
     }
   } catch (err) {
-    res.status(500).send({ ErrorName: err.name, ErrorMsg: err.message });
+    res
+      .status(500)
+      .send({ status: false, ErrorName: err.name, ErrorMsg: err.message });
   }
 };
 
@@ -196,7 +215,7 @@ const deleteblog = async function (req, res) {
     let subcategoryname = req.query.subcategory;
     let unpublished = req.query.isPublished;
 
-    let Blog = await blogModel.findById(authorId);
+    //let Blog = await blogModel.findById(authorId);
 
     if (authorId) {
       let deleteblog = await blogModel.updateMany(
@@ -248,7 +267,7 @@ const deleteblog = async function (req, res) {
       return res.status(200).send({ status: true, data: deleteblog });
     }
   } catch (error) {
-    return res.status(500).send({ error: error.message });
+    return res.status(500).send({ status: false, error: error.message });
   }
 };
 

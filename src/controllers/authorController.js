@@ -41,7 +41,7 @@ const authors = async function (req, res) {
     }
 
     //Validating password(Madtory)
-    if (!isValid(data.password)) {
+    if (!/^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,15}$/.test(data.password)) {
       return res
         .status(400)
         .send({ status: false, msg: "password is required" });
@@ -49,12 +49,12 @@ const authors = async function (req, res) {
     //If All Working Fine
     else {
       let savedData = await authorModel.create(data);
-      res.status(201).send({ msg: savedData });
+      res.status(201).send({ status: true, msg: savedData });
     }
   } catch (err) {
     return res
       .status(500)
-      .send({ ErrorName: err.name, ErrorMessage: err.message });
+      .send({ status: false, ErrorName: err.name, ErrorMessage: err.message });
   }
 };
 

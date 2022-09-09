@@ -9,7 +9,9 @@ exports.login = async function (req, res) {
     });
     //Validating Email And PassWord(present/Not)
     if (!checkEmailAndPassword) {
-      return res.status(400).send({ msg: "Email and Password Are invalid" });
+      return res
+        .status(400)
+        .send({ status: false, msg: "Email and Password Are invalid" });
 
       //creating Token
     } else {
@@ -21,13 +23,15 @@ exports.login = async function (req, res) {
         group: 30,
       };
       let Token = jwt.sign(payloadDetails, "FunctionUP-Project1-Group30");
+      //storingToken in req Object
+      req["x-api-key"] = Token;
       res.header({ "x-api-key": Token });
 
       return res
         .status(201)
-        .send({ data: Token, userId: checkEmailAndPassword._id });
+        .send({ status: true, data: Token, userId: checkEmailAndPassword._id });
     }
   } catch (err) {
-    res.status(500).send({ msg: "Server error HTTP 500" });
+    res.status(500).send({ status: false, msg: "Server error HTTP 500" });
   }
 };

@@ -7,6 +7,7 @@ const logInController = require("../controllers/logInController");
 //middleware
 const middleware = require("../middleware/auth");
 
+//test
 router.get("/test-me", function (req, res) {
   res.send("My first ever api!");
 });
@@ -15,7 +16,12 @@ router.get("/test-me", function (req, res) {
 router.post("/authors", authorController.authors);
 
 //creating Blogs API
-router.post("/blogs", blogController.blogs);
+router.post(
+  "/blogs",
+  middleware.headerCheck,
+  middleware.authentication,
+  blogController.blogs
+);
 
 // Fetching blogsByFilter
 router.get(
@@ -28,7 +34,7 @@ router.get(
 //Updating Blogs
 router.put(
   "/blogs/:blogId",
-  middleware.headerCheck,
+  middleware.authentication,
   middleware.blogIdPlusAuthorIdCheck,
   blogController.blogsUpdate
 );
@@ -36,7 +42,7 @@ router.put(
 // Deleted by blogId
 router.delete(
   "/blogsby/:blogId",
-  middleware.headerCheck,
+  // middleware.headerCheck,
   middleware.blogIdPlusAuthorIdCheck,
   blogController.deleteBlogById
 );
@@ -44,7 +50,7 @@ router.delete(
 // Delete by blog queryparams
 router.delete(
   "/blogs",
-  middleware.headerCheck,
+  //middleware.headerCheck,
   middleware.authentication,
   blogController.deleteblog
 );
