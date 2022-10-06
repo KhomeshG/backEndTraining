@@ -19,8 +19,8 @@ mongoose
 app.use("/", route);
 
 app.use(function (req, res) {
-  // var err = new Error("Not Found.");
-  // err.status = 404;
+  var err = new Error("Not Found.");
+  err.status = 404;
   return res.status(404).send({ status: "404", msg: "Path not Found." });
 });
 

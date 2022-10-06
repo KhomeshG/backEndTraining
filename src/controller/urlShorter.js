@@ -64,7 +64,7 @@ exports.urlShort = async function (req, res) {
 
     //regex for links
     let checkUrl =
-      /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/.test(
+      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%.\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%\+.~#?&\/\/=]*)/.test(
         req.body.longUrl
       );
 
@@ -123,15 +123,15 @@ exports.urlShort = async function (req, res) {
       // Seting in Cash Storage
       await SET_ASYNC(duplicateUrl.urlCode, JSON.stringify(duplicateUrl));
 
-      return res.status(201).send({
+      return res.status(200).send({
         status: true,
         msg: " this Url is already Present In Db ",
         data: duplicateUrl,
       });
     } else {
-      return res.status(201).send({
+      return res.status(200).send({
         status: true,
-        msg: " this  is Comming from Cache Memory",
+        msg: "this Url is already Present( Comming From Cache Memory) ",
         data: JSON.parse(cacheUrlInMemory),
       });
     }
@@ -144,44 +144,44 @@ exports.urlShort = async function (req, res) {
     //   });
     // }
   } catch (err) {
-    res.send({ status: false, msg: "Server Error!!", err: err.message });
+    res
+      .status(500)
+      .send({ status: false, msg: "Server Error!!", err: err.message });
   }
 };
 
 //get API
-exports.getLinkFromCache = async function (req, res) {
+exports.getUrlByParam = async function (req, res) {
   try {
-    if (!shortid.isValid(req.params.urlCode))
+    //================Get URLCODE=========================
+    let urlCode = req.params.urlCode;
+
+    //================Short Id Verification// npm i shortid=========================
+    if (!shortid.isValid(urlCode))
       return res.status(400).send({ status: false, message: "Invalid Code" });
-    if (!/^[a-zA-Z0-9_-]{7,14}$/.test(req.params.urlCode))
+    if (!/^[a-zA-Z0-9_-]{7,14}$/.test(urlCode))
       return res.status(400).send({
         status: false,
         message:
           "Enter UrlCode with a-z A-Z 0-9 -_ and of length 7-14 characters",
       });
 
-    //Finding in Cache
-    let urlCacheLink = await GET_ASYNC(req.params.urlCode);
+    // ======================= Get Data From cache====
+    let cahcedUrl = await GET_ASYNC(urlCode.toLowerCase()); //---get the urlCode from cache
 
-    //If(Not Found in Cache Memory)
-    if (urlCacheLink == null) {
-      let findUrlInCollection = await urlModel.findOne({
-        urlCode: req.params.urlCode,
-      });
-      //(Not Found in DB)
-      if (findUrlInCollection == null) {
-        return res
-          .status(404)
-          .send({ status: false, msg: "This Url Not Found in DB" });
-      }
-      // Seting in Cash Storage
-      await SET_ASYNC(req.params.urlCode, JSON.stringify(findUrlInCollection));
-
-      return res.status(302).redirect(findUrlInCollection.longUrl);
+    if (cahcedUrl) {
+      return res.status(302).redirect(cahcedUrl);
     } else {
-      return res.status(302).redirect(urlCacheLink);
+      let findUrl = await urlModel.findOne({ urlCode: urlCode });
+      if (!findUrl)
+        return res.status(404).send({ status: false, message: "No URL found" });
+
+      //=============Set data in cache===============================
+      await SET_ASYNC(urlCode, findUrl.longUrl);
+      //================Rediecting To Original URL=========================
+      return res.status(302).redirect(findUrl.longUrl);
     }
-  } catch (err) {
-    return res.status(500).send({ err: err.message });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
 };

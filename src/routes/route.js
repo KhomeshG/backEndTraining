@@ -11,6 +11,6 @@ router.get("/test", function (req, res) {
 router.post("/url/shorten", urlController.urlShort);
 
 //Using Cache
-router.get("/:urlCode", urlController.getLinkFromCache);
+router.get("/:urlCode", urlController.getUrlByParam);
 
 module.exports = router;
